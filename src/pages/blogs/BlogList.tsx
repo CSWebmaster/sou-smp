@@ -111,7 +111,7 @@ export default function BlogList() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-10 text-center pt-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#00629B] to-[#004f7c]">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 pb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#00629B] to-[#004f7c]">
               {categoryLabel}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

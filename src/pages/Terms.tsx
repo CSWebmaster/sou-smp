@@ -6,7 +6,7 @@ export default function Terms() {
       <main className="pt-32 pb-16 px-4">
         <div className="max-w-4xl mx-auto glass rounded-2xl p-8 md:p-12 shadow-sm border border-border/50">
           <h1 className="text-4xl font-bold mb-8">Terms & Conditions</h1>
-          
+
           <div className="prose prose-blue dark:prose-invert max-w-none space-y-6">
             <p>
               Welcome to the IEEE Silver Oak University Student Branch (IEEE SOU SB) website. By accessing or using our
