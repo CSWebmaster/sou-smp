@@ -167,9 +167,6 @@ export default function TeamFaculty() {
               {/* Other Members */}
               {sortedOtherMembers.length > 0 && (
                 <div className="mt-16">
-                  <h2 className="text-3xl font-semibold mb-8 text-center text-gray-900 dark:text-white">
-                    Faculty Advisors
-                  </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {sortedOtherMembers.map((member) => (
                       <div
