@@ -25,7 +25,7 @@ export const SmartLoader: React.FC<SmartLoaderProps> = ({
   message = "Loading experience..."
 }) => {
   if (type === "none") {
-    return <div className="invisible">{children}</div>; // Keep space but don't show yet
+    return <>{children}</>; // Fast path: render children directly
   }
 
   if (type === "shimmer") {

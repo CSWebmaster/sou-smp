@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { sendEmail } from "@/lib/sendEmail";
+import { useLatencyTracker } from "@/hooks/useLatencyTracker";
 
 export default function ContactUs() {
+  useLatencyTracker("ContactPage");
   const [isLoading, setIsLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 

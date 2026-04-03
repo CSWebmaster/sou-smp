@@ -16,8 +16,10 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { sendEmail } from "@/lib/sendEmail";
+import { useLatencyTracker } from "@/hooks/useLatencyTracker";
 
 export default function Join() {
+  useLatencyTracker("JoinPage");
   const [isLoading, setIsLoading] = useState(false);
   const [department, setDepartment] = useState("");
   const [semester, setSemester] = useState("");

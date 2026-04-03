@@ -55,7 +55,7 @@ const MemberPreviewList: React.FC<MemberPreviewListProps> = ({
   const memberTypes = [
     { value: "all", label: "All Members" },
     { value: "faculty", label: "Faculty" },
-    { value: "advisory", label: "Advisory Board" },
+    { value: "advisory", label: "Student Executive Committee" },
     { value: "executive", label: "Executive Committee" },
     { value: "core", label: "Core Committee" },
     { value: "member", label: "Members" },

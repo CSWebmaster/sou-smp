@@ -5,16 +5,21 @@ import { Separator } from "@/components/ui/separator";
 import { Medal, Trophy, Globe, GraduationCap, Calendar, User } from "lucide-react";
 import { TypingAnimation } from "@/components/TypingAnimation";
 import { useState, useEffect } from "react";
-import { collection, getDocs, query, orderBy, onSnapshot } from "@/lib/firestore-client";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
+import { useLatencyTracker } from "@/hooks/useLatencyTracker";
+import { SmartLoader } from "@/components/performance/SmartLoader";
+import { LazyImage } from "@/components/performance/LazyImage";
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export default function Achievements() {
+    useLatencyTracker("AchievementsPage");
     const [studentAchievements, setStudentAchievements] = useState<any[]>([]);
     const [individualAwards, setIndividualAwards] = useState<any[]>([]);
     const [branchAchievements, setBranchAchievements] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [startTime] = useState(Date.now());
 
     useEffect(() => {
         const unsubscribeStudent = onSnapshot(
@@ -88,14 +93,13 @@ export default function Achievements() {
             </section>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
-                {loading && (
-                    <div className="flex justify-center items-center py-12">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                        <span className="ml-3 text-muted-foreground">Loading achievements...</span>
-                    </div>
-                )}
-
-                {!loading && (
+                <SmartLoader
+                    isLoading={loading}
+                    duration={Date.now() - startTime}
+                    type="skeleton"
+                    skeletonCount={3}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
                     <>
                         {/* ── Section 1: Student Achievements ── */}
                         <section id="student-achievements">
@@ -118,7 +122,7 @@ export default function Achievements() {
                                         className="group overflow-hidden border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card"
                                     >
                                         <div className="relative h-44 overflow-hidden bg-muted/30">
-                                            <img loading="lazy"
+                                            <LazyImage
                                                 src={item.image}
                                                 alt={item.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -242,7 +246,7 @@ export default function Achievements() {
                             </div>
                         </section>
                     </>
-                )}
+                </SmartLoader>
             </div>
         </PageLayout>
     );

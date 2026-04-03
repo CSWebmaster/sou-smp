@@ -201,8 +201,9 @@ export default function EventsSection() {
       <style>{`
         .es-section {
           font-family: 'DM Sans', sans-serif;
-          padding: 3rem 1rem 2.5rem;
+          padding: 2.5rem 1rem 2rem;
           overflow: hidden;
+          height: auto;
         }
         .es-heading {
           font-family: 'Syne', sans-serif;
@@ -220,10 +221,10 @@ export default function EventsSection() {
         }
         .es-tab-btn {
           position: relative;
-          padding: 0.75rem 1.5rem;
+          padding: 0.6rem 1.4rem;
           font-family: 'Syne', sans-serif;
           font-weight: 700;
-          font-size: 1rem;
+          font-size: 0.95rem;
           border: none;
           background: transparent;
           color: #6b7280;
@@ -235,40 +236,49 @@ export default function EventsSection() {
           color: #6366f1;
           background: #eef2ff;
         }
-        .es-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          max-width: 1200px;
-          margin: 0 auto;
+        @media (prefers-color-scheme: dark) {
+          .es-tab-btn.active { background: rgba(99,102,241,0.15); }
+        }
+        /* VIEWPORT FIX: was missing, causing 0-height container */
+        .es-viewport {
+          position: relative;
+          min-height: 300px;
+          height: auto;
+          overflow: hidden;
         }
         .es-card {
           display: flex;
           flex-direction: row;
           background: var(--card, #ffffff);
           border: 1px solid rgba(0,0,0,0.07);
-          border-radius: 1.25rem;
+          border-radius: 1rem;
           overflow: hidden;
-          min-height: 270px;
+          min-height: 180px;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+          transition: box-shadow 0.3s ease;
         }
         .es-slide-in { transform: translateX(0); opacity: 1; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease; }
         .es-slide-out { transform: translateX(-110%); opacity: 0; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease; }
         .es-prepare { transform: translateX(110%); opacity: 0; transition: none; }
-        .es-img-side { width: 44%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 1.25rem; background: rgba(248, 249, 250, 0.4); backdrop-filter: blur(8px); }
-        .es-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; line-height: 1.35; margin-bottom: 0.6rem; color: #111827; }
-        .es-meta { display: flex; flex-direction: column; gap: 0.22rem; margin-bottom: 0.75rem; }
-        .es-meta-row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: #6b7280; }
-        .es-meta-icon { width: 0.75rem; height: 0.75rem; flex-shrink: 0; }
-        .es-desc-wrap { max-height: 4.8rem; overflow: hidden; transition: max-height 0.45s ease; }
-        .es-desc-wrap--open { max-height: 400px; }
-        .es-desc { font-size: 0.78rem; line-height: 1.65; color: #6b7280; }
-        .es-learn { display: inline-flex; align-items: center; gap: 0.3rem; margin-top: auto; padding-top: 0.85rem; font-size: 0.8rem; font-weight: 600; color: #6366f1; text-decoration: none; }
-        .es-dots { display: flex; justify-content: center; gap: 0.45rem; margin-top: 1.25rem; }
+        .es-img-side { width: 38%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0.875rem; background: rgba(248, 249, 250, 0.4); backdrop-filter: blur(8px); }
+        .es-img-side img, .es-img-side > div { min-height: 140px !important; max-height: 220px; }
+        .es-detail-side { flex: 1; padding: 1rem 1rem 1rem 0.5rem; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .es-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.92rem; line-height: 1.3; margin-bottom: 0.45rem; color: var(--foreground, #111827); }
+        .es-meta { display: flex; flex-direction: column; gap: 0.18rem; margin-bottom: 0.55rem; }
+        .es-meta-row { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; color: #6b7280; }
+        .es-meta-icon { width: 0.7rem; height: 0.7rem; flex-shrink: 0; }
+        .es-desc-wrap { max-height: 3.6rem; overflow: hidden; transition: max-height 0.45s ease; }
+        .es-desc-wrap--open { max-height: 300px; }
+        .es-desc { font-size: 0.74rem; line-height: 1.6; color: #6b7280; }
+        .es-learn { display: inline-flex; align-items: center; gap: 0.3rem; margin-top: auto; padding-top: 0.6rem; font-size: 0.76rem; font-weight: 600; color: #6366f1; text-decoration: none; }
+        .es-dots { display: flex; justify-content: center; gap: 0.45rem; margin-top: 1rem; }
         .es-dot { height: 0.5rem; width: 0.5rem; border-radius: 99px; border: none; cursor: pointer; background: #d1d5db; transition: all 0.3s; }
         .es-dot.es-dot--active { background: #6366f1; width: 1.4rem; }
-        @media (max-width: 620px) { .es-card { flex-direction: column; } .es-img-side { width: 100%; padding: 1rem 1rem 0; background: transparent; } }
+        @media (max-width: 620px) {
+          .es-card { flex-direction: column; }
+          .es-img-side { width: 100%; padding: 0.75rem 0.75rem 0; background: transparent; }
+          .es-detail-side { padding: 0.75rem; }
+        }
       `}</style>
 
       <div ref={sectionRef} className="es-section section-container">
@@ -283,7 +293,7 @@ export default function EventsSection() {
         </div>
 
         <div className="reveal zoom-fade delay-2 es-viewport">
-          <SmartLoader type={loaderType} containerClassName="min-h-[300px]">
+          <SmartLoader type={loaderType}>
              {currentEvents.length > 0 ? (
                 <SlideCard
                   event={currentEvents[Math.min(activeIdx, currentEvents.length - 1)]}

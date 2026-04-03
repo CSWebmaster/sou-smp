@@ -21,7 +21,7 @@ function SIGsSectionBackground({ imageUrl }: { imageUrl?: string }) {
     <div className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-background">
       {imageUrl ? (
         <div className="absolute inset-0 z-0 transition-opacity duration-1000 bg-background">
-          <div 
+          <div
             className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 dark:opacity-20 scale-110 blur-3xl transition-all duration-1000"
             style={{ backgroundImage: `url(${imageUrl})` }}
           />
@@ -42,7 +42,6 @@ export default function SIGs() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigateRouter = useNavigate();
   const lastScrollTime = useRef(0);
-  const scrollCooldown = 800; // Slightly reduced for better responsiveness
 
   // Fetch SIGs from Firestore
   useEffect(() => {
@@ -62,17 +61,33 @@ export default function SIGs() {
     fetchSIGs();
   }, []);
 
+  const currentIndexRef = useRef(0);
+
+  // Keep ref in sync with state
+  useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
+
+  const handleNext = () => {
+    if (currentIndexRef.current >= sigItems.length - 1) {
+      navigateRouter("/");
+      return;
+    }
+    setCurrentIndex((prev) => Math.min(sigItems.length - 1, prev + 1));
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
+  };
+
   useEffect(() => {
     if (sigItems.length === 0) return;
 
     const handleWheel = (e: WheelEvent) => {
       const now = Date.now();
-      if (now - lastScrollTime.current < scrollCooldown) return;
-      
-      // Use both deltaX and deltaY to trigger horizontal traversal
+      if (now - lastScrollTime.current < 1200) return; // longer cooldown prevents double-jump
+
       const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      
-      if (Math.abs(delta) > 30) {
+
+      if (Math.abs(delta) > 60) { // higher threshold to avoid high-velocity touchpad bursts
         if (delta > 0) handleNext();
         else handlePrev();
         lastScrollTime.current = now;
@@ -83,10 +98,10 @@ export default function SIGs() {
     const handleTouchStart = (e: TouchEvent) => { startX = e.touches[0].clientX; };
     const handleTouchMove = (e: TouchEvent) => {
       const now = Date.now();
-      if (now - lastScrollTime.current < scrollCooldown) return;
+      if (now - lastScrollTime.current < 1200) return;
       const currentX = e.touches[0].clientX;
       const deltaX = startX - currentX;
-      if (Math.abs(deltaX) > 40) {
+      if (Math.abs(deltaX) > 50) {
         if (deltaX > 0) handleNext();
         else handlePrev();
         lastScrollTime.current = now;
@@ -103,19 +118,7 @@ export default function SIGs() {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [currentIndex, sigItems]);
-
-  const handleNext = () => {
-    if (currentIndex === sigItems.length - 1) {
-      navigateRouter("/");
-      return;
-    }
-    setCurrentIndex((prev) => Math.min(sigItems.length - 1, prev + 1));
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
-  };
+  }, [sigItems]); // removed currentIndex dep — using ref instead to avoid stale closure
 
   const SIGCard = ({ item, index }: { item: SIGItem, index: number }) => {
     const diff = index - currentIndex;
@@ -133,16 +136,16 @@ export default function SIGs() {
     return (
       <div
         className="absolute w-[95vw] max-w-5xl transition-all duration-700 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] origin-center flex flex-col items-center"
-        style={{ 
-          transform: `translateX(${translateX}%) scale(${scale})`, 
-          opacity, 
-          zIndex, 
+        style={{
+          transform: `translateX(${translateX}%) scale(${scale})`,
+          opacity,
+          zIndex,
           pointerEvents: diff === 0 ? "auto" : "none",
           visibility: Math.abs(diff) > 1 ? "hidden" : "visible" // Performance optimization: hide non-adjacent cards
         }}
       >
         <div className="relative group overflow-hidden rounded-[2.5rem] border border-white/10 dark:border-white/5 bg-card/30 backdrop-blur-3xl shadow-[0_40px_100px_rgba(0,0,0,0.2)] h-[70vh] max-h-[calc(100vh-280px)] min-h-[450px] w-full flex flex-col md:flex-row transition-all duration-500 hover:shadow-[0_50px_120px_rgba(0,98,155,0.15)]">
-          
+
           {/* Ambient Sweep Animation */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
             <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] animate-[spin_20s_linear_infinite] bg-[conic-gradient(from_0deg_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,98,155,0.08)_50%,rgba(0,0,0,0)_100%)] dark:bg-[conic-gradient(from_0deg_at_50%_50%,rgba(255,255,255,0)_0%,rgba(255,255,255,0.05)_50%,rgba(255,255,255,0)_100%)] mix-blend-overlay pointer-events-none" />
@@ -162,8 +165,8 @@ export default function SIGs() {
           <div className="relative z-10 w-full md:w-[40%] h-[60%] md:h-full p-8 md:p-14 flex flex-col justify-center bg-gradient-to-br from-card/90 to-transparent">
             <div className={`transition-all duration-1000 delay-200 ease-out ${diff === 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
               <div className="flex items-center gap-4 mb-6">
-                 <div className="h-1 w-10 bg-[#00629B] rounded-full transition-all duration-700 ease-out group-hover:w-20" />
-                 <span className="text-[10px] uppercase tracking-[0.3em] text-[#00629B] font-black">SIG Spotlight</span>
+                <div className="h-1 w-10 bg-[#00629B] rounded-full transition-all duration-700 ease-out group-hover:w-20" />
+                <span className="text-[10px] uppercase tracking-[0.3em] text-[#00629B] font-black">SIG Spotlight</span>
               </div>
               <h3 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 leading-[1.1] tracking-tight text-foreground drop-shadow-sm">
                 {item.title}
@@ -171,7 +174,7 @@ export default function SIGs() {
               <p className="text-sm md:text-base lg:text-lg text-muted-foreground leading-relaxed line-clamp-5 md:line-clamp-none font-medium opacity-80 mb-8">
                 {item.details}
               </p>
-              
+
               <Link
                 to={`/sigs/${item.id}`}
                 className="mt-4 flex items-center gap-3 text-[#00629B] font-bold group/link"
@@ -202,9 +205,9 @@ export default function SIGs() {
           <span>Home</span>
         </Link>
         <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] opacity-40">
-           <span>{sigItems.length} Groups</span>
-           <div className="w-1 h-1 bg-foreground rounded-full" />
-           <span>2024 Edition</span>
+          <span>{sigItems.length} Groups</span>
+          <div className="w-1 h-1 bg-foreground rounded-full" />
+          <span>2024 Edition</span>
         </div>
       </div>
 
@@ -234,7 +237,7 @@ export default function SIGs() {
               />
             ))}
           </div>
-          
+
           <div className="flex flex-col items-center gap-1">
             <p className="text-[10px] text-muted-foreground animate-pulse tracking-[0.5em] uppercase font-black">
               Scroll Left • Scroll Right

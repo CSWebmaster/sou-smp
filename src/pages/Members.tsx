@@ -1,13 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { Search, Linkedin } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TypingAnimation } from "@/components/TypingAnimation";
-import { Skeleton } from "@/components/ui/skeleton";
-import { collection, getDocs, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
+import { useLatencyTracker } from "@/hooks/useLatencyTracker";
+import { SmartLoader } from "@/components/performance/SmartLoader";
+import { LazyImage } from "@/components/performance/LazyImage";
 
 type MemberType = {
   id: string;
@@ -200,6 +201,7 @@ const STUDENT_MEMBERS: MemberType[] = [
 ];
 
 export default function Members() {
+  useLatencyTracker("MembersPage");
   const [searchTerm, setSearchTerm] = useState("");
   const [allMembers, setAllMembers] = useState<MemberType[]>([]);
   const [filteredMembers, setFilteredMembers] = useState<{
@@ -212,6 +214,7 @@ export default function Members() {
     students: [],
   });
   const [loading, setLoading] = useState(true);
+  const [startTime] = useState(Date.now());
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -327,7 +330,7 @@ export default function Members() {
             >
               <div className="p-6">
                 <div className="flex items-start mb-4">
-                  <img loading="lazy"
+                  <LazyImage
                     src={member.image}
                     alt={member.name}
                     className="w-16 h-16 rounded-full object-cover mr-4 flex-shrink-0"
@@ -368,29 +371,9 @@ export default function Members() {
             </p>
           </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-8">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="glass rounded-lg overflow-hidden shadow-sm p-6">
-                  <div className="flex items-start mb-4">
-                    <Skeleton className="w-16 h-16 rounded-full mr-4 flex-shrink-0" />
-                    <div className="flex-1 min-w-0 space-y-3 mt-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-4 w-4 rounded-full" />
-                      </div>
-                      <Skeleton className="h-5 w-16 rounded-full" />
-                    </div>
-                  </div>
-                  <div className="space-y-3 pt-2 text-sm">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
+          <SmartLoader
+            type="none"
+          >
             <>
               <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div className="relative w-full md:w-96">
@@ -410,10 +393,10 @@ export default function Members() {
               </div>
 
               {renderMemberSection("Faculty Members", filteredMembers.faculty)}
-              {renderMemberSection("Advisory Board", filteredMembers.advisory)}
+              {renderMemberSection("Student Executive Committee", filteredMembers.advisory)}
               {renderMemberSection("Student Members", filteredMembers.students)}
             </>
-          )}
+          </SmartLoader>
         </div>
       </main>
     </PageLayout>

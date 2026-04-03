@@ -245,42 +245,66 @@ export default function TeamExecutive() {
                     {sorted.map((member) => (
                       <div
                         key={member.id}
-                        className="bg-white dark:bg-gray-900 glass rounded-xl overflow-hidden shadow-md hover:shadow-lg 
-                                   dark:hover:shadow-[0_0_10px_rgba(255,255,255,0.7)] hover:scale-[1.02]
-                                   transition-all duration-300 p-6 flex flex-col items-center text-center h-full cursor-pointer relative"
+                        className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl
+                                   hover:scale-[1.03] transition-all duration-300 p-6
+                                   flex flex-col items-center text-center h-full cursor-pointer
+                                   border border-white/20 dark:border-white/10"
+                        style={{
+                          background: 'rgba(255,255,255,0.55)',
+                          backdropFilter: 'blur(20px) saturate(1.4)',
+                          WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
+                        }}
                       >
-                        <ImageLoader
-                          src={member.image}
-                          alt={member.name}
-                          containerClassName="w-32 h-32 mb-4"
-                          className="w-full h-full rounded-lg object-cover border-2 border-muted dark:border-gray-700"
-                        />
-                        <div className="flex flex-col items-center justify-center mb-2 min-h-[56px] w-full px-2">
-                          <h3 className="font-semibold text-xl text-gray-900 dark:text-white line-clamp-2">
-                            {member.name}
-                          </h3>
-                        </div>
-                        <div className="flex-grow flex flex-col items-center justify-start w-full gap-3 mt-1">
-                          <p className="text-sm text-gray-700 dark:text-gray-300 text-center font-medium">
-                            {member.position}
-                          </p>
-                          {member.linkedin && (
-                            <a
-                              href={member.linkedin}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors"
-                              onClick={(e) => e.stopPropagation && e.stopPropagation()}
-                            >
-                              <Linkedin className="h-4 w-4" />
-                            </a>
+                        {/* Blurred cloud aura behind avatar */}
+                        {member.image && (
+                          <div
+                            className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none opacity-30"
+                            style={{
+                              backgroundImage: `url(${member.image})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              filter: 'blur(22px)',
+                              transform: 'translateX(-50%) scale(1.3)',
+                            }}
+                          />
+                        )}
+                        {/* Dark mode cloud */}
+                        <div className="absolute inset-0 pointer-events-none dark:bg-gray-900/60 rounded-2xl" />
+
+                        <div className="relative z-10 flex flex-col items-center w-full">
+                          <ImageLoader
+                            src={member.image}
+                            alt={member.name}
+                            containerClassName="w-28 h-28 mb-4"
+                            className="w-full h-full rounded-xl object-cover border-2 border-white/60 dark:border-gray-600 shadow-md"
+                          />
+                          <div className="flex flex-col items-center justify-center mb-2 min-h-[48px] w-full px-2">
+                            <h3 className="font-bold text-base text-gray-900 dark:text-white line-clamp-2">
+                              {member.name}
+                            </h3>
+                          </div>
+                          <div className="flex flex-col items-center w-full gap-2 mt-1">
+                            <p className="text-xs text-gray-600 dark:text-gray-300 text-center font-semibold tracking-wide">
+                              {member.position}
+                            </p>
+                            {member.linkedin && (
+                              <a
+                                href={member.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/70 dark:bg-blue-900/40 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors shadow-sm border border-blue-100 dark:border-blue-800"
+                                onClick={(e) => e.stopPropagation && e.stopPropagation()}
+                              >
+                                <Linkedin className="h-3.5 w-3.5" />
+                              </a>
+                            )}
+                          </div>
+                          {(member.education || member.department) && (
+                            <p className="text-[11px] text-muted-foreground dark:text-gray-400 mt-2 line-clamp-1">
+                              {member.education || member.department}
+                            </p>
                           )}
                         </div>
-                        {(member.education || member.department) && (
-                          <p className="text-xs text-muted-foreground dark:text-gray-400 mt-2">
-                            {member.education || member.department}
-                          </p>
-                        )}
                       </div>
                     ))}
                   </div>
